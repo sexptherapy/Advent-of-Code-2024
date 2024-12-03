@@ -25,10 +25,12 @@
           0
           loc-pairs))
 
-;; "Main" for day 01, exercise 01.
-(-> input
-    parse-locs
-    locs->loc-lists
-    loc-lists->loc-pairs
-    calc-total-distance)
-;; => 2769675
+(comment
+  ;; "Main" for day 01, exercise 01.
+  (-> input
+      parse-locs
+      locs->loc-lists
+      loc-lists->loc-pairs
+      calc-total-distance)
+  ;; => 2769675
+:end)
