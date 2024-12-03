@@ -2,7 +2,7 @@
   (:require
    [clojure.string :as str]))
 
-(def input (slurp "data/input"))
+(def last-known-locations (slurp "data/01-last-known-locations"))
 
 (defn parse-locs [s]
   (map Integer/parseInt (str/split s #"\s+")))
@@ -27,10 +27,23 @@
 
 (comment
   ;; "Main" for day 01, exercise 01.
-  (-> input
+  (-> last-known-locations
       parse-locs
       locs->loc-lists
       loc-lists->loc-pairs
       calc-total-distance)
   ;; => 2769675
 :end)
+
+(defn similarity-score [[loc-list-a loc-list-b :as _loc-lists]]
+  (reduce + (for [loc loc-list-a]
+              (* loc (count (filter #{loc} loc-list-b))))))
+
+(comment
+  ;; Answer for day 01, exercise 02.
+  (-> last-known-locations
+      parse-locs
+      locs->loc-lists
+      similarity-score)
+  ;; => 24643097
+  :end)
