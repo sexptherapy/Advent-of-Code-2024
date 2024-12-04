@@ -1,6 +1,11 @@
 (ns main
   (:require
-   [clojure.string :as str]))
+   [clojure.string :as str]
+   [clojure.test :refer [with-test is]]))
+
+;;; Day 01
+
+;;;; Exercise 01
 
 (def last-known-locations (slurp "data/01-last-known-locations"))
 
@@ -35,6 +40,8 @@
   ;; => 2769675
 :end)
 
+;;;; Exercise 02
+
 (defn similarity-score [[loc-list-a loc-list-b :as _loc-lists]]
   (reduce + (for [loc loc-list-a]
               (* loc (count (filter #{loc} loc-list-b))))))
@@ -46,4 +53,59 @@
       locs->loc-lists
       similarity-score)
   ;; => 24643097
+  :end)
+
+
+;;; Day 02
+
+;;;; Exercise 01
+(def unusual-data (slurp "data/02-unusual-data"))
+
+(defn parse-reports [s]
+  (into [] (comp
+            (map #(str/split % #"\s+"))
+            (map (partial mapv #(Integer/parseInt %))))
+        (str/split s #"\n")))
+
+;; The levels are all either increasing or all decreasing.
+
+(defn gradual-transition? [report]
+  (or (apply < report)
+      (apply > report)))
+
+;; Any two adjacent levels differ by at least one and at most three.
+
+(defn safe-transition? [report]
+  (->> report
+       (partition 2 1)
+       (map (partial sort >))
+       (map (partial apply -))
+       (every? #{1 2 3})))
+
+(with-test
+
+  (defn safe-report? [report]
+    (and (gradual-transition? report)
+         (safe-transition? report)))
+
+  (is (true? (safe-report? [7 6 4 2 1]))
+      "Safe because the levels are all decreasing by 1 or 2.")
+  (is (false? (safe-report? [1 2 7 8 9]))
+      "Unsafe because 2 7 is an increase of 5.")
+  (is (false? (safe-report? [9 7 6 2 1]))
+      "Unsafe because 6 2 is a decrease of 4.")
+  (is (false? (safe-report? [1 3 2 4 5]))
+      "Unsafe because 1 3 is increasing but 3 2 is decreasing.")
+  (is (false? (safe-report? [8 6 4 4 1]))
+      "Unsafe because 4 4 is neither an increase or a decrease.")
+  (is (true? (safe-report? [1 3 6 7 9]))
+      "Safe because the levels are all increasing by 1, 2, or 3."))
+
+(comment
+  ;; Solution to day 02, exercise 01.
+  (->> unusual-data
+       parse-reports
+       (filter safe-report?)
+       count)
+  ;; => 202
   :end)
