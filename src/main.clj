@@ -109,3 +109,40 @@
        count)
   ;; => 202
   :end)
+
+;;;; Exercise 02
+
+(defn- drop-nth [index coll]
+  (let [[a b] (split-at index coll)]
+    (concat a (rest b))))
+
+(with-test
+
+  (defn safe-report?* [report]
+    (let [reports (repeat (count report) report)]
+      (->> reports
+           (map-indexed drop-nth)
+           (some safe-report?)
+           boolean)))
+
+  (is (true? (safe-report?* [7 6 4 2 1]))
+      "Safe without removing any level.")
+  (is (false? (safe-report?* [1 2 7 8 9]))
+      "Unsafe regardless of which level is removed.")
+  (is (false? (safe-report?* [9 7 6 2 1]))
+      "Unsafe regardless of which level is removed.")
+  (is (true? (safe-report?* [1 3 2 4 5]))
+      "Safe by removing the second level, 3.")
+  (is (true? (safe-report?* [8 6 4 4 1]))
+      "Safe by removing the third level, 4.")
+  (is (true? (safe-report?* [1 3 6 7 9]))
+      "Safe without removing any level."))
+
+(comment
+  ;; Solution to day 02, exercise 02.
+  (->> unusual-data
+       parse-reports
+       (filter safe-report?*)
+       count)
+  ;; => 271
+  :end)
