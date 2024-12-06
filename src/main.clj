@@ -146,3 +146,27 @@
        count)
   ;; => 271
   :end)
+
+;;; Day 03
+
+;;;; Exercise 01
+
+(def corrupted-memory (slurp "data/03-corrupted-memory"))
+
+(with-test
+
+  (defn process-valid-instructions [memory]
+    (->> memory
+         (re-seq #"mul\((\d+{3})\,(\d+{3})\)")
+         (map (fn [[_raw-instruction arg1 arg2]]
+                (* (Integer/parseInt arg1) (Integer/parseInt arg2))))
+         (reduce +)))
+
+  (let [corrupted-memory-example "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))"]
+    (is (= 161 (process-valid-instructions corrupted-memory-example)))))
+
+(comment
+  ;; Solution to day 03, exercise 01.
+  (process-valid-instructions corrupted-memory)
+  ;; => 174960292
+  :end)
