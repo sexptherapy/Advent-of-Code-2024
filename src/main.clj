@@ -170,3 +170,23 @@
   (process-valid-instructions corrupted-memory)
   ;; => 174960292
   :end)
+
+;;;; Exercise 02
+
+(with-test
+
+  (defn process-valid-instructions* [memory]
+    (process-valid-instructions
+     (transduce (comp (map #(str/split % #"don't\(\)"))
+                      (map first))
+                str
+                (str/split memory #"do\(\)"))))
+
+  (let [corrupted-memory-example-2 "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))"]
+    (is (= 48 (process-valid-instructions* corrupted-memory-example-2)))))
+.
+(comment
+  ;; Solution to day 03, exercise 02.
+  (process-valid-instructions* corrupted-memory)
+  ;; => 56275602
+  :end)
